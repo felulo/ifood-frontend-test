@@ -1,0 +1,33 @@
+.list-group__item {
+  position: relative;
+  display: block;
+  margin-bottom: -1px;
+  background-color: #fff;
+  border: 1px solid rgba(0,0,0,.125);
+}
+
+.list-group__item:hover {
+  color: #495057;
+  background-color: #f8f9fa;
+}
+
+.list-group__item-anchor {
+  display: block;
+  padding: 15px 20px;
+
+  color: #212529;
+
+  text-decoration: none;
+}
+
+.list-group__item-image {
+  width: 64px;
+  border-radius: 4px;
+}
+
+.list-group__item-text {
+  line-height: 64px;
+  display: inline-block;
+  vertical-align: top;
+  margin-left: 15px;
+}

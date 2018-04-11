@@ -1,0 +1,29 @@
+.input-container {
+  margin: 0 10px;
+  padding: 5px 8px;
+  float: left;
+}
+
+.input-container__label {
+  display: block;
+  padding: 5px 0;
+
+  color: #212529;
+}
+
+.input-container__input {
+  display: block;
+  padding: 5px;
+  width: 100%;
+
+  line-height: 1.5;
+  color: #495057;
+
+  background-color: #fff;
+  background-clip: padding-box;
+
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+
+  transition: border-color .15s ease-in-out;
+}

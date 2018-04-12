@@ -8,9 +8,18 @@ import getFilterService from '../services/filter.service';
 import SpotifyAuth from '../components/SpotifyAuth';
 import ListPlaylist from '../components/ListPlaylist';
 import Filter from '../components/Filter';
+import Message from '../components/Message';
 
 const CHECK_API_TIME = 30000;
 const DEBOUNCE_TIME = 500;
+
+const ERRORS = {
+  'not filter': 'Não contem filtros',
+  'access_denied': 'Ocorreu um erro ao tentar autenticar na API do Spotify. Tente Novamente',
+  'Invalid timestamp': 'Data e horário no formato correto. Ex: 04/21/2018 03:04:00 PM',
+  'Invalid country code': 'País inválido',
+  'Invalid limit': 'Quantidade inválida'
+}
 
 class App extends Component {
   constructor(props){
@@ -18,6 +27,7 @@ class App extends Component {
 
     this.state = {
       isAuthorized: false,
+      errorAPI: {},
       filters: [],
       filtersValues: {},
       playlists: []
@@ -51,11 +61,9 @@ class App extends Component {
   }
 
   changedFilter = _.debounce(({ id, value }) => {
-    let filtersValues = Object.assign({}, this.state.filtersValues);
-    filtersValues[id] = value;
+    let filtersValues = _.set(this.state.filtersValues, `${id}`, value);
 
-    this.setState({ filtersValues });
-    this.getFeaturedPlaylists();
+    this.setState({ filtersValues }, this.getFeaturedPlaylists);
   }, DEBOUNCE_TIME)
 
   handleChangedFilter = (e) => {
@@ -63,15 +71,42 @@ class App extends Component {
   }
 
   getFilters = () => {
+    const errorAPI = {
+      show: false
+    };
+
     getFilterService()
-      .then(({ filters }) => this.setState({ filters }));
+      .then(({ filters }) => this.setState({ filters, errorAPI }))
+      .catch((res) => { 
+        this.setState({
+          errorAPI: {
+            show: true,
+            message: ERRORS['not filter']
+          }
+        }) 
+      });
   }
 
   getFeaturedPlaylists = () => {
+    const errorAPI = {
+      show: false
+    };
+
     this.spotify
       .getListFeaturedPlaylist(this.state.filtersValues)
-      .then(({ playlists }) => playlists.items)
-      .then(playlists => this.setState({ playlists }));
+      .then(({ playlists }) => playlists ? playlists.items : [])
+      .then(playlists => this.setState({ playlists, errorAPI }))
+      .catch(res => {
+        res.json().then(({ error }) => {
+          this.setState({ 
+            errorAPI: {
+              show: true,
+              message: ERRORS[error.message]
+            }
+          })
+        });
+      });
+
   }
 
   render() {
@@ -90,6 +125,10 @@ class App extends Component {
               )
             }
           </form>
+
+          <p className="total-playlists">
+            Playlists sendo exibidas: {this.state.playlists.length}
+          </p>
           
           <ListPlaylist items={this.state.playlists}/>
         </div>
@@ -106,6 +145,7 @@ class App extends Component {
       <div className="app">
         <h1 className="title-app">Spotifood</h1>
         {elements}
+        {this.state.errorAPI.show && <Message message={this.state.errorAPI.message} />}
       </div>
     );
   }

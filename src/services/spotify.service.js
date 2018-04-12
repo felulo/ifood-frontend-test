@@ -140,14 +140,20 @@ class SpotifyService {
     const filtersText = this.parseFilters(filters);
     const url = `${SPOTIFY_BASE_URI_API}/browse/featured-playlists${filtersText}`;
 
-    return window.fetch(url, {
-      method: 'GET',
-      headers: {
-        Authorization: `Bearer ${this.oAuth.access_token}`
-      }
-    }).then((res) => {
-      return res.json();
-    });
+    return window
+      .fetch(url, {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${this.oAuth.access_token}`
+        }
+      })
+      .then((res) => {
+        if (!res.ok) {
+          throw res;
+        }
+
+        return res.json();
+      })
   }
 }
 

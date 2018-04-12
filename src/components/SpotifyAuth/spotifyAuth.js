@@ -8,7 +8,7 @@ class SpotifyAuth extends Component {
     wrapper.authorize()
       .then(onAuthenticated)
       .catch((res) => {
-        console.log(res);
+        
       });
   }
 

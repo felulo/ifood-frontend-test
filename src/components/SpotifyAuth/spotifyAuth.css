@@ -4,13 +4,15 @@
 }
 
 .spotify-auth__button {
-  display: inline-block;
-  padding: 8px 15px;
+  display: block;
+  padding: 14px 30px;
+  margin: 0 auto;
 
   color: #fff;
   background-image: url('../../images/spotify_button.png');
   background-repeat: no-repeat;
-  background-position: 0 0;
+  background-position: 7px 8px;
+  background-size: 86px;
   background-color: #1DB954;
 
   text-indent: -9000px;

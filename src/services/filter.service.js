@@ -6,7 +6,11 @@ const getFilterService = () => {
 
   return window.fetch(url, {
     method: 'GET'
-  }).then((res) =>{ 
+  }).then((res) =>{
+    if (!res.ok) {
+      throw res;
+    }
+
     return res.json();
   });
 };

@@ -1,5 +1,4 @@
 .input-container {
-  margin: 0 10px;
   padding: 5px 8px;
   float: left;
 }
@@ -26,4 +25,10 @@
   border-radius: 4px;
 
   transition: border-color .15s ease-in-out;
+}
+
+@media (max-width: 900px) {
+  .input-container {
+    width: 100%;
+  }
 }

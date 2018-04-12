@@ -9,8 +9,12 @@ body {
 }
 
 #root {
-  width: 1134px;
+  width: 900px;
   margin: 0 auto;
+}
+
+.app {
+  position: relative;
 }
 
 .title-app {
@@ -19,5 +23,20 @@ body {
 
 .form-filter {
   margin: 0 auto;
-  width: 900px;
+  width: 800px;
+}
+
+.total-playlists {
+  display: block;
+  width: 100%;
+  float: left;
+  clear: both;
+
+  text-align: center;
+}
+
+@media (max-width: 910px) {
+  #root, .form-filter {
+    width: 100%;
+  }
 }

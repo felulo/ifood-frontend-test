@@ -76,7 +76,7 @@ class App extends Component {
     };
 
     getFilterService()
-      .then(({ filters }) => this.setState({ filters, errorAPI }))
+      .then(({ filters }) => this.setState({ filters }))
       .catch((res) => { 
         this.setState({
           errorAPI: {
@@ -95,7 +95,7 @@ class App extends Component {
     this.spotify
       .getListFeaturedPlaylist(this.state.filtersValues)
       .then(({ playlists }) => playlists ? playlists.items : [])
-      .then(playlists => this.setState({ playlists, errorAPI }))
+      .then(playlists => this.setState({ playlists }))
       .catch(res => {
         res.json().then(({ error }) => {
           this.setState({ 
@@ -126,7 +126,7 @@ class App extends Component {
             }
           </form>
 
-          <p className="total-playlists">
+          <p className="total-playlists" tabIndex="0">
             Playlists sendo exibidas: {this.state.playlists.length}
           </p>
           
@@ -143,7 +143,9 @@ class App extends Component {
 
     return (
       <div className="app">
-        <h1 className="title-app">Spotifood</h1>
+        <h1 className="title-app" tabIndex="0">
+          Spotifood
+        </h1>
         {elements}
         {this.state.errorAPI.show && <Message message={this.state.errorAPI.message} />}
       </div>

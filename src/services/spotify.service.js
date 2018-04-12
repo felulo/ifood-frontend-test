@@ -50,7 +50,7 @@ class SpotifyService {
     return;
   }
 
-  checkPopupHasOpened() {
+  checkPopupHasClosed() {
     const isClosed = this.oAuthPopup.closed;
 
     if (isClosed) {
@@ -101,11 +101,11 @@ class SpotifyService {
         left=${leftPopup}
       `;
 
-      if (!this.isAuthorized()) {
+      if (!this.isClientAuthorized) {
         this.oAuthPopup = window.open(spotifyAuthorizeURI, windowName, windowOptions);
 
         this.oAuthInterval = window.setInterval(() => {
-          if (this.checkPopupHasOpened()) {
+          if (this.checkPopupHasClosed()) {
             reject({
               error: 'closed_popup'
             });
@@ -130,10 +130,6 @@ class SpotifyService {
         resolve();
       }
     });
-  }
-
-  isAuthorized() {
-    return this.isClientAuthorized && (Date.now() < this.oAuth.expires_in);
   }
 
   getListFeaturedPlaylist(filters) {

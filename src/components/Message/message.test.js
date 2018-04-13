@@ -10,10 +10,12 @@ chai.use(sinonChai);
 
 describe('<Message />', () => {
   let wrapper;
+
   const message = 'Quantidade inválida.';
+  const onClick = sinon.spy();
 
   beforeEach(() => {
-    wrapper = shallow(<Message message={message} />);
+    wrapper = shallow(<Message message={message} onClose={onClick}/>);
   });
 
   it('renders component', () => {
@@ -21,6 +23,12 @@ describe('<Message />', () => {
   });
 
   it('renders text with message', () => {
-    expect(wrapper.find('.message').text()).to.equal(message);
+    expect(wrapper.find('.message__text').text()).to.equal(message);
+  });
+
+  it('simulate click close', () => {
+    wrapper.find('.message__button').simulate('click');
+
+    expect(onClick).to.have.been.called;
   });
 });

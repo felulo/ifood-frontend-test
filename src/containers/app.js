@@ -14,6 +14,7 @@ const CHECK_API_TIME = 30000;
 const DEBOUNCE_TIME = 500;
 
 const ERRORS = {
+  'empty': 'Não foi encontrado playlists',
   'not filter': 'Não contem filtros',
   'access_denied': 'Ocorreu um erro ao tentar autenticar na API do Spotify. Tente Novamente',
   'Invalid timestamp': 'Data e horário no formato correto. Ex: 04/21/2018 03:04:00 PM',
@@ -31,7 +32,7 @@ class App extends Component {
       filters: [],
       filtersValues: {},
       playlists: []
-    }
+    };
 
     this.spotify = new SpotifyService();
   }
@@ -48,10 +49,22 @@ class App extends Component {
     }, CHECK_API_TIME);
   }
 
-  handleAuthenticated = () => {
+  errorRequest = (message) => {
     this.setState({
-      isAuthorized: true
-    })
+      errorAPI: {
+        show: true,
+        message: ERRORS[message]
+      }
+    });
+  }
+
+  successAuthenticated = () => {
+    this.setState({
+      isAuthorized: true,
+      errorAPI: {
+        show: false
+      }
+    });
 
     this.getFilters();
     this.getFeaturedPlaylists();
@@ -70,43 +83,65 @@ class App extends Component {
     this.changedFilter(e.target);
   }
 
-  getFilters = () => {
-    const errorAPI = {
-      show: false
-    };
+  closeMessage = () => {
+    this.setState({
+      errorAPI: {
+        show: false
+      }
+    });
+  }
 
-    getFilterService()
-      .then(({ filters }) => this.setState({ filters }))
-      .catch((res) => { 
-        this.setState({
+  errorFeaturedPlaylists = (response) => {
+    response
+      .json()
+      .then(({ error }) => this.errorRequest(error.message));
+  }
+
+  successFeaturedPlaylists = ({ playlists }) => {
+    if (playlists) {
+      let objState = {}
+      if (playlists.items.length > 0) {
+        objState = {
+          playlists: playlists.items,
           errorAPI: {
-            show: true,
-            message: ERRORS['not filter']
+            show: false
           }
-        }) 
-      });
+        };
+      } else {
+        objState = {
+          playlists: []
+        };
+        this.errorRequest('empty');
+      }
+
+      this.setState(objState);
+    }
+  }
+
+  errorFilters = () => {
+    this.errorRequest('not filter')
+  }
+
+  successFilters = ({ filters }) => {
+    this.setState({
+      filters,
+      errorAPI: {
+        show: false
+      }
+    });
+  }
+
+  getFilters = () => {
+    return getFilterService()
+      .then(this.successFilters)
+      .catch(this.errorFilters);
   }
 
   getFeaturedPlaylists = () => {
-    const errorAPI = {
-      show: false
-    };
-
-    this.spotify
+    return this.spotify
       .getListFeaturedPlaylist(this.state.filtersValues)
-      .then(({ playlists }) => playlists ? playlists.items : [])
-      .then(playlists => this.setState({ playlists }))
-      .catch(res => {
-        res.json().then(({ error }) => {
-          this.setState({ 
-            errorAPI: {
-              show: true,
-              message: ERRORS[error.message]
-            }
-          })
-        });
-      });
-
+      .then(this.successFeaturedPlaylists)
+      .catch(this.errorFeaturedPlaylists);
   }
 
   render() {
@@ -137,7 +172,8 @@ class App extends Component {
       elements = (
         <SpotifyAuth
           wrapper={this.spotify}
-          onAuthenticated={this.handleAuthenticated}/>
+          onSuccessAuthenticated={this.successAuthenticated}
+          onErrorAuthenticated={this.errorRequest}/>
       );
     }
 
@@ -147,7 +183,7 @@ class App extends Component {
           Spotifood
         </h1>
         {elements}
-        {this.state.errorAPI.show && <Message message={this.state.errorAPI.message} />}
+        {this.state.errorAPI.show && <Message message={this.state.errorAPI.message} onClose={this.closeMessage} />}
       </div>
     );
   }

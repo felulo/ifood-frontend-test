@@ -1,13 +1,15 @@
 import React, { Component } from 'react';
 import PropType from 'prop-types';
 
+const ERROR_ACCESS_DENIED = 'access_denied';
+
 class SpotifyAuth extends Component {
   authenticate = () => {
-    const { wrapper, onAuthenticated } = this.props;
+    const { wrapper, onSuccessAuthenticated, onErrorAuthenticated } = this.props;
 
     wrapper.authorize()
-      .then(onAuthenticated)
-      .catch((res) => { });
+      .then(onSuccessAuthenticated)
+      .catch(() => onErrorAuthenticated(ERROR_ACCESS_DENIED));
   }
 
   render() {
@@ -28,8 +30,9 @@ class SpotifyAuth extends Component {
 const { object, func } = PropType;
 
 SpotifyAuth.propType = {
-  wrapper: object,
-  onAuthenticated: func
+  wrapper: object.isRequired,
+  onSuccessAuthenticated: func.isRequired,
+  onErrorAuthenticated: func.isRequired
 }
 
 export default SpotifyAuth;

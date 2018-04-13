@@ -1,9 +1,10 @@
 .message {
-  position: absolute;
+  position: fixed;
+
   padding: 10px 25px;
   bottom: 0px;
 
-  width: 100%;
+  width: 900px;
   z-index: 50;
   
   border: 1px solid transparent;
@@ -12,4 +13,23 @@
   color: #721c24;
   background-color: #f8d7da;
   border-color: #f5c6cb;
+}
+
+.message__button {
+  position: absolute;
+  top: 3px;
+  right: 3px;
+
+  font-size: 18px;
+  color: #721c24;
+
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+@media (max-width: 910px) {
+  .message {
+    width: calc(100% - 10px);
+  }
 }
